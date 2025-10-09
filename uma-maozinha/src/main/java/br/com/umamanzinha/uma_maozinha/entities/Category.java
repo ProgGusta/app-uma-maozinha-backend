@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "categories")
 @Getter
@@ -21,8 +23,5 @@ public class Category {
 
     @Column(nullable = false, unique = true)
     private CategoryType name;
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private FreelancerProfile freelancerProfile;
 
 }
