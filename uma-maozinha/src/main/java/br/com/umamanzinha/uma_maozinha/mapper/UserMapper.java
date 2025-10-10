@@ -21,18 +21,19 @@ public class UserMapper {
         user.setAddresses(addresses.stream()
                 .map(AddressMapper::toEntity)
                 .collect(Collectors.toList()));
-        user.getAddresses().forEach(address -> address.setUser(user));
+        user.getAddresses().forEach(address -> address.setUser(user)); // salva a referência do usuário em cada endereço senão dá erro de chave estrangeira
 
         List<PhoneDTO> phones = dto.phoneDTO();
         user.setPhones((phones.stream()
                 .map(PhoneMapper::toEntity)
                 .collect(Collectors.toList())));
-        user.getPhones().forEach(phone -> phone.setUser(user));
+        user.getPhones().forEach(phone -> phone.setUser(user)); // salva a referência do usuário em cada telefone senão dá erro de chave estrangeira
         return user;
     }
 
     public static UserDTO toDto(User user){
         return new UserDTO(
+            user.getId(),
             user.getName(),
             user.getEmail(),
             user.getPassword(),
