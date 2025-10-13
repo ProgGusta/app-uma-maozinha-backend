@@ -38,10 +38,25 @@ public class UserService {
         return UserMapper.toDto(userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("User not found")));
     }
-
+    @Transactional
     public List<UserDTO> getAll(){
         return userRepository.findAll().stream()
                 .map(UserMapper::toDto)
                 .collect(Collectors.toList());
+    }
+    public UserDTO update(Long id,UserDTO userDTO){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        user.setEmail(userDTO.email());
+        user.setName(userDTO.name());
+        user.setPassword(userDTO.password());
+
+
+        User userSaved = userRepository.save(user);
+
+        return UserMapper.toDto(userSaved);
+
+
     }
 }
