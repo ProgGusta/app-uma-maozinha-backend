@@ -2,6 +2,7 @@ package br.com.umamanzinha.uma_maozinha.controller;
 
 import br.com.umamanzinha.uma_maozinha.dtos.UserDTO;
 import br.com.umamanzinha.uma_maozinha.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO));
     }
     @GetMapping("/{id}")
@@ -31,7 +32,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateById(@RequestBody UserDTO userDTO, @PathVariable Long id){
+    public ResponseEntity<UserDTO> updateById(@Valid @RequestBody UserDTO userDTO, @PathVariable Long id){
         return ResponseEntity.ok(userService.update(id,userDTO));
     }
 
