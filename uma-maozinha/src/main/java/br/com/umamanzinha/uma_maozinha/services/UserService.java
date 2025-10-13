@@ -44,6 +44,8 @@ public class UserService {
                 .map(UserMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+
     public UserDTO update(Long id,UserDTO userDTO){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -57,6 +59,13 @@ public class UserService {
 
         return UserMapper.toDto(userSaved);
 
+    }
+
+    public void deleteById(Long id){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        userRepository.delete(user);
 
     }
 }

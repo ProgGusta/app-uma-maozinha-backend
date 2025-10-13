@@ -33,6 +33,12 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateById(@RequestBody UserDTO userDTO, @PathVariable Long id){
         return ResponseEntity.ok(userService.update(id,userDTO));
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id){
+        userService.deleteById(id);
+        return ResponseEntity.noContent()
+                .build();
     }
 }
