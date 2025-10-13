@@ -10,6 +10,9 @@ import br.com.umamanzinha.uma_maozinha.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -31,8 +34,14 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO getUserById(Long id) {
+    public UserDTO getById(Long id) {
         return UserMapper.toDto(userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("User not found")));
+    }
+
+    public List<UserDTO> getAll(){
+        return userRepository.findAll().stream()
+                .map(UserMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

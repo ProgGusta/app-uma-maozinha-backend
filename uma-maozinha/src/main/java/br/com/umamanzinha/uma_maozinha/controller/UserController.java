@@ -3,9 +3,10 @@ package br.com.umamanzinha.uma_maozinha.controller;
 import br.com.umamanzinha.uma_maozinha.dtos.UserDTO;
 import br.com.umamanzinha.uma_maozinha.services.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -22,6 +23,10 @@ public class UserController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+        return ResponseEntity.ok(userService.getById(id));
+    }
+    @GetMapping()
+    public ResponseEntity<List<UserDTO>> getUserById() {
+        return ResponseEntity.ok(userService.getAll());
     }
 }
