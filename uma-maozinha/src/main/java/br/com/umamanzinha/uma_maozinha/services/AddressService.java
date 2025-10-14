@@ -6,16 +6,20 @@ import br.com.umamanzinha.uma_maozinha.entities.User;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
 import br.com.umamanzinha.uma_maozinha.mapper.AddressMapper;
 import br.com.umamanzinha.uma_maozinha.repository.AddressRepository;
+import br.com.umamanzinha.uma_maozinha.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class AddressService {
     private final AddressRepository addressRepository;
+    private final UserRepository userRepository;
 
-    public AddressService(AddressRepository addressRepository) {
+    public AddressService(AddressRepository addressRepository, UserRepository userRepository) {
         this.addressRepository = addressRepository;
+        this.userRepository = userRepository;
     }
 
     public void saveAllAddresses(User user, List<AddressDTO> addressDTOs) {
@@ -28,9 +32,13 @@ public class AddressService {
         user.setAddresses(addreesses);
     }
 
+    @Transactional
     public AddressDTO addAddressToUser(Long userId, AddressDTO addressDTO) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         Address address = AddressMapper.toEntity(addressDTO);
-        address.getUser().setId(userId);
+        address.setUser(user);
         Address savedAddress = addressRepository.save(address);
         return AddressMapper.toDto(savedAddress);
     }
