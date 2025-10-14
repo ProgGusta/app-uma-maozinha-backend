@@ -17,17 +17,6 @@ public class UserMapper {
         user.setName(dto.name());
         user.setEmail(dto.email());
         user.setPassword(dto.password());
-        List<AddressDTO> addresses = dto.addressDTO();
-        user.setAddresses(addresses.stream()
-                .map(AddressMapper::toEntity)
-                .collect(Collectors.toList()));
-        user.getAddresses().forEach(address -> address.setUser(user)); // salva a referência do usuário em cada endereço senão dá erro de chave estrangeira
-
-        List<PhoneDTO> phones = dto.phoneDTO();
-        user.setPhones((phones.stream()
-                .map(PhoneMapper::toEntity)
-                .collect(Collectors.toList())));
-        user.getPhones().forEach(phone -> phone.setUser(user)); // salva a referência do usuário em cada telefone senão dá erro de chave estrangeira
         return user;
     }
 
@@ -37,12 +26,16 @@ public class UserMapper {
             user.getName(),
             user.getEmail(),
             user.getPassword(),
-            user.getAddresses().stream()
-                    .map(AddressMapper::toDto)
-                    .collect(Collectors.toList()),
-            user.getPhones().stream()
-                    .map(PhoneMapper::toDto)
-                    .collect(Collectors.toList())
+            user.getAddresses() != null ?
+                    user.getAddresses()
+                        .stream()
+                        .map(AddressMapper::toDto)
+                        .collect(Collectors.toList()) : null,
+            user.getPhones().stream() != null ?
+                    user.getPhones()
+                        .stream()
+                        .map(PhoneMapper::toDto)
+                        .collect(Collectors.toList()) : null
         );
     }
 

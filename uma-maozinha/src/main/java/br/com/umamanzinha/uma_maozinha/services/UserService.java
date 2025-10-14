@@ -18,19 +18,30 @@ public class UserService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final PhoneRepository phoneRepository;
+    private final AddressService addressService;
+    private final PhoneService phoneService;
 
-    public UserService(UserRepository userRepository, AddressRepository addressRepository, PhoneRepository phoneRepository) {
+    public UserService(UserRepository userRepository, AddressRepository addressRepository, PhoneRepository phoneRepository, AddressService addressService, PhoneService phoneService) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.phoneRepository = phoneRepository;
+        this.addressService = addressService;
+        this.phoneService = phoneService;
     }
 
+
+    @Transactional
     public UserDTO createUser(UserDTO userDTO) {
         User user  = UserMapper.toEntity(userDTO);
         user = userRepository.save(user);
 
-        userDTO = UserMapper.toDto(user);
-        return userDTO;
+        if (userDTO.addressDTO() != null)
+            addressService.saveAllAddresses(user, userDTO.addressDTO());
+
+        if (userDTO.phoneDTO() != null)
+            phoneService.saveAllPhones(user, userDTO.phoneDTO());
+
+        return UserMapper.toDto(user);
     }
 
     @Transactional
