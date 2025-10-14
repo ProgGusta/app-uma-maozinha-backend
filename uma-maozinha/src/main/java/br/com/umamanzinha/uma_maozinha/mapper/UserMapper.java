@@ -1,13 +1,8 @@
 package br.com.umamanzinha.uma_maozinha.mapper;
 
-import br.com.umamanzinha.uma_maozinha.dtos.AddressDTO;
-import br.com.umamanzinha.uma_maozinha.dtos.PhoneDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.UserDTO;
-import br.com.umamanzinha.uma_maozinha.entities.Address;
 import br.com.umamanzinha.uma_maozinha.entities.User;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
