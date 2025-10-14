@@ -9,6 +9,7 @@ import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
 import br.com.umamanzinha.uma_maozinha.mapper.AddressMapper;
 import br.com.umamanzinha.uma_maozinha.mapper.PhoneMapper;
 import br.com.umamanzinha.uma_maozinha.repository.PhoneRepository;
+import br.com.umamanzinha.uma_maozinha.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +17,12 @@ import java.util.List;
 @Service
 public class PhoneService {
     private final PhoneRepository phoneRepository;
+    private final UserRepository userRepository;
 
-    public PhoneService(PhoneRepository phoneRepository) {
+
+    public PhoneService(PhoneRepository phoneRepository, UserRepository userRepository) {
         this.phoneRepository = phoneRepository;
+        this.userRepository = userRepository;
     }
 
     public void saveAllPhones(User user, List<PhoneDTO> phoneDTOs) {
@@ -32,9 +36,11 @@ public class PhoneService {
     }
 
     public PhoneDTO addPhoneToUser(Long userId, PhoneDTO phoneDTO) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         Phone phone = PhoneMapper.toEntity(phoneDTO);
-        phone.setUser(new User());
-        phone.getUser().setId(userId);
+        phone.setUser(user);
         Phone savedPhone = phoneRepository.save(phone);
         return PhoneMapper.toDto(savedPhone);
     }
