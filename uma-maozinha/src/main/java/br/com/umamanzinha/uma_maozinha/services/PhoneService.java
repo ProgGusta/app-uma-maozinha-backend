@@ -6,7 +6,6 @@ import br.com.umamanzinha.uma_maozinha.entities.Address;
 import br.com.umamanzinha.uma_maozinha.entities.Phone;
 import br.com.umamanzinha.uma_maozinha.entities.User;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
-import br.com.umamanzinha.uma_maozinha.mapper.AddressMapper;
 import br.com.umamanzinha.uma_maozinha.mapper.PhoneMapper;
 import br.com.umamanzinha.uma_maozinha.repository.PhoneRepository;
 import br.com.umamanzinha.uma_maozinha.repository.UserRepository;
@@ -45,7 +44,7 @@ public class PhoneService {
         return PhoneMapper.toDto(savedPhone);
     }
 
-    public PhoneDTO updatePhone(Long phoneId, PhoneDTO phoneDTO) {
+    public PhoneDTO updatePhone(Long phoneId, PhoneDTO phoneDTO) {//mudar isso aqui, se pá não precisa
         Phone phone = phoneRepository.findById(phoneId).orElseThrow(
                 () -> new ResourceNotFoundException("Phone not found")
         );

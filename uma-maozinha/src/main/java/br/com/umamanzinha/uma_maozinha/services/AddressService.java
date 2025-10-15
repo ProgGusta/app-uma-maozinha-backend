@@ -67,7 +67,11 @@ public class AddressService {
     }
 
     public List<AddressDTO> getAddressesByUserId(Long userId) {
+        if (!userRepository.existsById(userId)){
+            throw new ResourceNotFoundException("User not found");
+        }
         List<Address> addresses = addressRepository.findByUserId(userId);
+
         return addresses.stream()
                 .map(AddressMapper::toDto)
                 .toList();
