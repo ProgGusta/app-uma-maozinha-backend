@@ -21,16 +21,14 @@ public class UserMapper {
             user.getName(),
             user.getEmail(),
             user.getPassword(),
-            user.getAddresses() != null ?
-                    user.getAddresses()
+            user.getAddresses()
                         .stream()
                         .map(AddressMapper::toDto)
-                        .collect(Collectors.toList()) : null,
-            user.getPhones().stream() != null ?
-                    user.getPhones()
+                        .collect(Collectors.toList()),
+            user.getPhones()
                         .stream()
                         .map(PhoneMapper::toDto)
-                        .collect(Collectors.toList()) : null
+                        .collect(Collectors.toList())
         );
     }
 

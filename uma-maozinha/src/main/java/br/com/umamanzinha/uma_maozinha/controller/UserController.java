@@ -35,7 +35,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getById(id));
     }
     @GetMapping()
-    public ResponseEntity<List<UserDTO>> getUserById() {
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAll());
     }
 
