@@ -1,10 +1,10 @@
 package br.com.umamanzinha.uma_maozinha.dtos;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public record PhoneDTO(
-    @NotNull @NotEmpty String number,
+    Long id,
+    @NotBlank String number,
     Boolean isWhatsApp,
     String description
 ) {

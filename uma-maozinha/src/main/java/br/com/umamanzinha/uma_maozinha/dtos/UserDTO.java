@@ -9,9 +9,9 @@ import java.util.List;
 
 public record UserDTO(
     Long id,
-    @NotBlank @NotEmpty @NotNull String name,
-    @NotBlank @NotEmpty @NotNull @Email String email,
-    @NotBlank @NotEmpty @NotNull String password,
+    @NotBlank String name,
+    @NotBlank @Email String email,
+    @NotBlank String password,
     List<AddressDTO> addressDTO,
     List<PhoneDTO> phoneDTO
 ) {
