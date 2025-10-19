@@ -16,6 +16,7 @@ public class PhoneMapper {
 
     public static PhoneDTO toDto(Phone phone) {
         return new PhoneDTO(
+            phone.getId(),
             phone.getNumber(),
             phone.getIsWhatsApp(),
             phone.getDescription()
