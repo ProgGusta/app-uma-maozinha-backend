@@ -13,6 +13,8 @@ import br.com.umamanzinha.uma_maozinha.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class ServicesService {
     private final ServicesRepository servicesRepository;
@@ -38,4 +40,15 @@ public class ServicesService {
 
         return ServicesMapper.toDTO(services);
     }
+    public List<ServicesDTO> getAllServicesByUserId(Long userId) {
+        List<Services> servicesList = servicesRepository.findByUserId(userId);
+        return servicesList.stream()
+                .map(ServicesMapper::toDTO).toList();
+    }
+    public List<ServicesDTO> getAllServicesByFreelancerId(Long freelancerProfileId) {
+        List<Services> servicesList = servicesRepository.findByFreelancerProfileId(freelancerProfileId);
+        return servicesList.stream()
+                .map(ServicesMapper::toDTO).toList();
+    }
+
 }

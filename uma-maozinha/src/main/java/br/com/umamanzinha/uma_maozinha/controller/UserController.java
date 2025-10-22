@@ -2,9 +2,11 @@ package br.com.umamanzinha.uma_maozinha.controller;
 
 import br.com.umamanzinha.uma_maozinha.dtos.AddressDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.PhoneDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.ServicesDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.UserDTO;
 import br.com.umamanzinha.uma_maozinha.services.AddressService;
 import br.com.umamanzinha.uma_maozinha.services.PhoneService;
+import br.com.umamanzinha.uma_maozinha.services.ServicesService;
 import br.com.umamanzinha.uma_maozinha.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -19,11 +21,13 @@ public class UserController {
     private final UserService userService;
     private final AddressService addressService;
     private final PhoneService phoneService;
+    private final ServicesService servicesService;
 
-    public UserController(UserService userService, AddressService addressService, PhoneService phoneService) {
+    public UserController(UserService userService, AddressService addressService, PhoneService phoneService, ServicesService servicesService) {
         this.userService = userService;
         this.addressService = addressService;
         this.phoneService = phoneService;
+        this.servicesService = servicesService;
     }
 
     @PostMapping("/create")
@@ -49,5 +53,12 @@ public class UserController {
         userService.deleteById(id);
         return ResponseEntity.noContent()
                 .build();
+    }
+
+    // services
+    @GetMapping("{userId}/user")
+    public ResponseEntity<List<ServicesDTO>> getServicesByUser(@PathVariable Long userId) {
+        List<ServicesDTO> services = servicesService.getAllServicesByUserId(userId);
+        return ResponseEntity.ok(services);
     }
 }

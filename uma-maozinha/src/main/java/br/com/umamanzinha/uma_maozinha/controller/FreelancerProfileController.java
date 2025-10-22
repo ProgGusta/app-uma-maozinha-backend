@@ -1,8 +1,10 @@
 package br.com.umamanzinha.uma_maozinha.controller;
 
+import br.com.umamanzinha.uma_maozinha.dtos.ServicesDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerRequestDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerResponseDTO;
 import br.com.umamanzinha.uma_maozinha.services.FreelancerProfileService;
+import br.com.umamanzinha.uma_maozinha.services.ServicesService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +18,12 @@ import java.util.List;
 public class FreelancerProfileController {
 
     private final FreelancerProfileService freelancerProfileService;
+    private final ServicesService servicesService;
 
     @Autowired
-    public FreelancerProfileController(FreelancerProfileService freelancerProfileService) {
+    public FreelancerProfileController(FreelancerProfileService freelancerProfileService, ServicesService servicesService) {
         this.freelancerProfileService = freelancerProfileService;
+        this.servicesService = servicesService;
     }
 
     @PostMapping("/{user_id}/create")
@@ -54,5 +58,12 @@ public class FreelancerProfileController {
         freelancerProfileService.deleteProfile(profile_id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    //services
+    @GetMapping("/{freelancerId}/services")
+    public ResponseEntity<List<ServicesDTO>> getServicesByFreelancer(@PathVariable Long freelancerId) {
+        List<ServicesDTO> services = servicesService.getAllServicesByFreelancerId(freelancerId);
+        return ResponseEntity.ok(services);
     }
 }
