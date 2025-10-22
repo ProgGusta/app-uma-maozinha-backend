@@ -1,7 +1,6 @@
 package br.com.umamanzinha.uma_maozinha.entities;
 
 import jakarta.persistence.*;
-import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

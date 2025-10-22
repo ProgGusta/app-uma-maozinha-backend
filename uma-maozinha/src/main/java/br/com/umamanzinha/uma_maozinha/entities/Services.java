@@ -22,7 +22,9 @@ public class Services {
     @Column(name = "service_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ServiceStatus status;
 
     @Column(nullable = false)

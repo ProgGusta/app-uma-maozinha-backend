@@ -38,16 +38,16 @@ public class GlobalExceptionalHandler {
                 .map(err -> new FieldErrorDTO(err.getField(), err.getDefaultMessage()))
                 .toList();
 
-        ExceptionDTO dto = new ExceptionDTO(
+        ExceptionDTO exception = new ExceptionDTO(
                 HttpStatus.BAD_REQUEST.value(),
-                "Validation Failed",
+                "Validation Failed!",
                 ex.getMessage(),
                 request.getRequestURI(),
                 LocalDateTime.now(),
                 fieldErrors
         );
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(dto);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -59,16 +59,16 @@ public class GlobalExceptionalHandler {
                         v.getMessage()))
                 .toList();
 
-        ExceptionDTO dto = new ExceptionDTO(
+        ExceptionDTO exception = new ExceptionDTO(
                 HttpStatus.BAD_REQUEST.value(),
-                "Validation Failed",
+                "Validation Failed!",
                 ex.getMessage(),
                 request.getRequestURI(),
                 LocalDateTime.now(),
                 fieldErrors
         );
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(dto);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception);
     }
 }
 
