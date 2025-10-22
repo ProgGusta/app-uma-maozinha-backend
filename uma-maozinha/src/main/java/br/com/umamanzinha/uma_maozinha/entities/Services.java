@@ -24,7 +24,6 @@ public class Services {
     private Long id;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private ServiceStatus status;
 
     @Column(nullable = false)
