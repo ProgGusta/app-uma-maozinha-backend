@@ -2,6 +2,7 @@ package br.com.umamanzinha.uma_maozinha.services;
 
 import br.com.umamanzinha.uma_maozinha.dtos.UserDTO;
 import br.com.umamanzinha.uma_maozinha.entities.User;
+import br.com.umamanzinha.uma_maozinha.exceptions.BusinessRuleException;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
 import br.com.umamanzinha.uma_maozinha.mapper.UserMapper;
 import br.com.umamanzinha.uma_maozinha.repository.AddressRepository;
@@ -32,6 +33,10 @@ public class UserService {
 
     @Transactional
     public UserDTO createUser(UserDTO userDTO) {
+        if (userRepository.existsByEmail(userDTO.email())) {
+            throw new BusinessRuleException("Email already in use"); // TODO: criar exception especifica
+        }
+
         User user  = UserMapper.toEntity(userDTO);
         user = userRepository.save(user);
 
@@ -40,6 +45,8 @@ public class UserService {
 
         if (userDTO.phoneDTO() != null)
             phoneService.saveAllPhones(user, userDTO.phoneDTO());
+
+
 
         return UserMapper.toDto(user);
     }
@@ -60,6 +67,10 @@ public class UserService {
     public UserDTO update(Long id,UserDTO userDTO){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (userRepository.existsByEmail(userDTO.email())) {
+            throw new BusinessRuleException("Email already in use"); // TODO: criar exception especifica
+        }
 
         user.setEmail(userDTO.email());
         user.setName(userDTO.name());
