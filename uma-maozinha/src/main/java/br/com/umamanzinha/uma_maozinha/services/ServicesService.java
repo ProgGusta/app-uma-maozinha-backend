@@ -5,7 +5,9 @@ import br.com.umamanzinha.uma_maozinha.entities.FreelancerProfile;
 import br.com.umamanzinha.uma_maozinha.entities.Services;
 import br.com.umamanzinha.uma_maozinha.entities.User;
 import br.com.umamanzinha.uma_maozinha.enums.ServiceStatus;
+import br.com.umamanzinha.uma_maozinha.exceptions.BusinessRuleException;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
+import br.com.umamanzinha.uma_maozinha.exceptions.UnauthorizedActionException;
 import br.com.umamanzinha.uma_maozinha.mapper.ServicesMapper;
 import br.com.umamanzinha.uma_maozinha.repository.FreelancerProfileRepository;
 import br.com.umamanzinha.uma_maozinha.repository.ServicesRepository;
@@ -50,5 +52,65 @@ public class ServicesService {
         return servicesList.stream()
                 .map(ServicesMapper::toDTO).toList();
     }
+
+    public ServicesDTO confirmService(Long serviceId, Long freelancerId){
+        Services service =  servicesRepository.findById(serviceId).orElseThrow(
+                () -> new ResourceNotFoundException("Service not found"));
+
+        if(!service.getFreelancerProfile().getId().equals(freelancerId))
+            throw new UnauthorizedActionException("You cannot update another freelancer service status!");
+
+        if(!service.getStatus().equals(ServiceStatus.PENDING)){
+            throw new BusinessRuleException("You cannot confirm this service");
+        }
+        service.setStatus(ServiceStatus.CONFIRMED);
+
+        return ServicesMapper.toDTO(servicesRepository.save(service));
+
+    }
+    public ServicesDTO cancelService(Long serviceId, Long freelancerId){
+        Services service =  servicesRepository.findById(serviceId).orElseThrow(
+                () -> new ResourceNotFoundException("Service not found"));
+
+        if(!service.getFreelancerProfile().getId().equals(freelancerId))
+            throw new UnauthorizedActionException("You cannot update another freelancer service status!");
+
+
+        service.setStatus(ServiceStatus.CANCELLED);
+
+        return ServicesMapper.toDTO(servicesRepository.save(service));
+
+    }
+    public ServicesDTO completeService(Long serviceId, Long freelancerId){
+        Services service =  servicesRepository.findById(serviceId).orElseThrow(
+                () -> new ResourceNotFoundException("Service not found"));
+
+        if(!service.getFreelancerProfile().getId().equals(freelancerId))
+            throw new UnauthorizedActionException("You cannot update another freelancer service status!");
+
+
+        service.setStatus(ServiceStatus.COMPLETED);
+
+        return ServicesMapper.toDTO(servicesRepository.save(service));
+
+    }
+    public ServicesDTO changeStatusToInProgress(Long serviceId, Long freelancerId){
+        Services service =  servicesRepository.findById(serviceId).orElseThrow(
+                () -> new ResourceNotFoundException("Service not found"));
+
+        if(!service.getFreelancerProfile().getId().equals(freelancerId))
+            throw new UnauthorizedActionException("You cannot update another freelancer service status!");
+
+        if(!service.getStatus().equals(ServiceStatus.CONFIRMED)){
+            throw new BusinessRuleException("You cannot change this service status to In Progress");
+        }
+        service.setStatus(ServiceStatus.IN_PROGRESS);
+
+
+        return ServicesMapper.toDTO(servicesRepository.save(service));
+
+    }
+
+
 
 }

@@ -70,5 +70,29 @@ public class GlobalExceptionalHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception);
     }
+    @ExceptionHandler(UnauthorizedActionException.class)
+    public ResponseEntity<ExceptionDTO> handleUnauthorizedAction (UnauthorizedActionException ex, HttpServletRequest request){
+        ExceptionDTO exception = new ExceptionDTO(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                ex.getMessage(),
+                request.getRequestURI(),
+                LocalDateTime.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception);
+    }
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ExceptionDTO> handleBusinessRuleException (BusinessRuleException ex, HttpServletRequest request){
+        ExceptionDTO exception = new ExceptionDTO(
+                HttpStatus.BAD_REQUEST.value(), //se pá mudar
+                "Broken Business Rule",
+                ex.getMessage(),
+                request.getRequestURI(),
+                LocalDateTime.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception);
+    }
 }
 
