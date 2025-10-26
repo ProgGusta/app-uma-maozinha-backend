@@ -10,7 +10,8 @@ public record FreelancerResponseDTO(
         String title,
         String description,
         UserSimpleResponseDTO user,
-        CategorySimpleResponseDTO category
+        CategorySimpleResponseDTO category,
+        Double averageRating
 ) {
     public record UserSimpleResponseDTO(
             Long id,
@@ -36,7 +37,8 @@ public record FreelancerResponseDTO(
                 profile.getTitle(),
                 profile.getDescription(),
                 new UserSimpleResponseDTO(profile.getUser()),
-                new CategorySimpleResponseDTO(profile.getCategory())
+                new CategorySimpleResponseDTO(profile.getCategory()),
+                profile.getAverageRating()
         );
     }
 }

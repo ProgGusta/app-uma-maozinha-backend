@@ -31,4 +31,7 @@ public class FreelancerProfile {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id_fk", nullable = false)
     private Category category;
+
+    @Column( name = "average_rating") // botar nullable = false pós teste
+    private Double averageRating;
 }

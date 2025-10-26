@@ -40,6 +40,7 @@ public class FreelancerProfileService {
                 .orElseThrow(() -> new RuntimeException("Category not found: " + dto.category()));
 
         FreelancerProfile freelancerProfile = FreelancerProfileMapper.toEntity(dto, user,  categoryEntity);
+        freelancerProfile.setAverageRating(0.0);
         freelancerProfile = freelancerProfileRepository.save(freelancerProfile);
 
         return  new FreelancerResponseDTO(freelancerProfile);
