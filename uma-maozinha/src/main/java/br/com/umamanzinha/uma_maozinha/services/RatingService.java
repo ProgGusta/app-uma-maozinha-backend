@@ -75,6 +75,21 @@ public class RatingService {
         calculateRating(rating.getFreelancerProfile());
 
     }
+    @Transactional
+    public List<RatingResponseDTO> getAllRatingsByFreelancerProfileId(Long freelancerProfileId) {
+        List<Ratings> ratings = ratingRepository.findByFreelancerProfile_Id(freelancerProfileId);
+        return ratings.stream()
+                .map(RatingMapper::toDTO)
+                .toList();
+    }
+
+    @Transactional
+    public List<RatingResponseDTO> getAllRatingsByUserId(Long userId) {
+        List<Ratings> ratings = ratingRepository.findByServices_User_Id(userId);
+        return ratings.stream()
+                .map(RatingMapper::toDTO)
+                .toList();
+    }
 
     private void calculateRating(FreelancerProfile freelancerProfile) {
         List<Ratings> ratings = ratingRepository.findByFreelancerProfile_Id(freelancerProfile.getId());

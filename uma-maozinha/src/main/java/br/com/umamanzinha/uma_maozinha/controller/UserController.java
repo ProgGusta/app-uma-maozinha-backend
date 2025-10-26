@@ -4,10 +4,8 @@ import br.com.umamanzinha.uma_maozinha.dtos.AddressDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.PhoneDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.ServicesDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.UserDTO;
-import br.com.umamanzinha.uma_maozinha.services.AddressService;
-import br.com.umamanzinha.uma_maozinha.services.PhoneService;
-import br.com.umamanzinha.uma_maozinha.services.ServicesService;
-import br.com.umamanzinha.uma_maozinha.services.UserService;
+import br.com.umamanzinha.uma_maozinha.dtos.rating.RatingResponseDTO;
+import br.com.umamanzinha.uma_maozinha.services.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +20,14 @@ public class UserController {
     private final AddressService addressService;
     private final PhoneService phoneService;
     private final ServicesService servicesService;
+    private final RatingService ratingService;
 
-    public UserController(UserService userService, AddressService addressService, PhoneService phoneService, ServicesService servicesService) {
+    public UserController(UserService userService, AddressService addressService, PhoneService phoneService, ServicesService servicesService, RatingService ratingService) {
         this.userService = userService;
         this.addressService = addressService;
         this.phoneService = phoneService;
         this.servicesService = servicesService;
+        this.ratingService = ratingService;
     }
 
     @PostMapping("/create")
@@ -60,5 +60,12 @@ public class UserController {
     public ResponseEntity<List<ServicesDTO>> getServicesByUser(@PathVariable Long userId) {
         List<ServicesDTO> services = servicesService.getAllServicesByUserId(userId);
         return ResponseEntity.ok(services);
+    }
+
+    //ratings
+    @GetMapping("/{userId}/ratings")
+    public ResponseEntity<List<RatingResponseDTO>> getRatingsByUser(@PathVariable Long userId) {
+        List<RatingResponseDTO> ratings = ratingService.getAllRatingsByUserId(userId);
+        return ResponseEntity.ok(ratings);
     }
 }

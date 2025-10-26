@@ -3,7 +3,9 @@ package br.com.umamanzinha.uma_maozinha.controller;
 import br.com.umamanzinha.uma_maozinha.dtos.ServicesDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerRequestDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerResponseDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.rating.RatingResponseDTO;
 import br.com.umamanzinha.uma_maozinha.services.FreelancerProfileService;
+import br.com.umamanzinha.uma_maozinha.services.RatingService;
 import br.com.umamanzinha.uma_maozinha.services.ServicesService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,13 @@ public class FreelancerProfileController {
 
     private final FreelancerProfileService freelancerProfileService;
     private final ServicesService servicesService;
+    private final RatingService ratingService;
 
     @Autowired
-    public FreelancerProfileController(FreelancerProfileService freelancerProfileService, ServicesService servicesService) {
+    public FreelancerProfileController(FreelancerProfileService freelancerProfileService, ServicesService servicesService, RatingService ratingService) {
         this.freelancerProfileService = freelancerProfileService;
         this.servicesService = servicesService;
+        this.ratingService = ratingService;
     }
 
     @PostMapping("/{user_id}/create")
@@ -65,5 +69,11 @@ public class FreelancerProfileController {
     public ResponseEntity<List<ServicesDTO>> getServicesByFreelancer(@PathVariable Long freelancerId) {
         List<ServicesDTO> services = servicesService.getAllServicesByFreelancerId(freelancerId);
         return ResponseEntity.ok(services);
+    }
+
+    @GetMapping("/{freelancerId}/ratings")
+    public ResponseEntity<List<RatingResponseDTO>> getRatingsByFreelancer(@PathVariable Long freelancerId) {
+        List<RatingResponseDTO> ratings = ratingService.getAllRatingsByFreelancerProfileId(freelancerId);
+        return ResponseEntity.ok(ratings);
     }
 }
