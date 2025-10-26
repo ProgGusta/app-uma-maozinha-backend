@@ -21,4 +21,15 @@ public class RatingController {
     public ResponseEntity<RatingResponseDTO> createRating(@Valid @RequestBody RatingRequestDTO ratingRequestDTO, @PathVariable Long serviceId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ratingService.createRating(ratingRequestDTO, serviceId));
     }
+
+    @PatchMapping("/{ratingId}")
+    public ResponseEntity<RatingResponseDTO> updateRating(@PathVariable Long ratingId,@Valid @RequestBody RatingRequestDTO ratingRequestDTO) {
+        return ResponseEntity.ok(ratingService.updateRating(ratingId, ratingRequestDTO));
+    }
+    @DeleteMapping("/{ratingId}")
+    public ResponseEntity<Void> deleteRating(@PathVariable Long ratingId) {
+        ratingService.deleteRating(ratingId);
+        return ResponseEntity.noContent().build();
+
+    }
 }

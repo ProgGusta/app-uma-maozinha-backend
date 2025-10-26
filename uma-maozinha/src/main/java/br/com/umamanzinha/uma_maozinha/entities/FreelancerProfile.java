@@ -32,6 +32,6 @@ public class FreelancerProfile {
     @JoinColumn(name = "category_id_fk", nullable = false)
     private Category category;
 
-    @Column( name = "average_rating") // botar nullable = false pós teste
+    @Column(nullable = false, name = "average_rating")
     private Double averageRating;
 }

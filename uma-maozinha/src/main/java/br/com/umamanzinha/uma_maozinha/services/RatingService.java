@@ -45,6 +45,37 @@ public class RatingService {
 
     }
 
+
+    @Transactional
+    public RatingResponseDTO updateRating(Long ratingId, RatingRequestDTO ratingRequestDTO) {
+        Ratings rating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Rating not found"));
+
+        if (ratingRequestDTO.score() != null) {
+            rating.setScore(ratingRequestDTO.score());
+            calculateRating(rating.getFreelancerProfile());
+        }
+
+        if (ratingRequestDTO.comment() != null)
+            rating.setComment(ratingRequestDTO.comment());
+
+        Ratings updatedRating = ratingRepository.save(rating);
+
+
+        return RatingMapper.toDTO(updatedRating);
+    }
+
+    @Transactional
+    public void deleteRating(Long ratingId) {
+        Ratings rating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Rating not found"));
+
+        ratingRepository.delete(rating);
+
+        calculateRating(rating.getFreelancerProfile());
+
+    }
+
     private void calculateRating(FreelancerProfile freelancerProfile) {
         List<Ratings> ratings = ratingRepository.findByFreelancerProfile_Id(freelancerProfile.getId());
         Double averageRating = ratings.stream()

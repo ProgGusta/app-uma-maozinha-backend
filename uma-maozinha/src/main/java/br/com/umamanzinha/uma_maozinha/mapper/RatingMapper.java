@@ -19,7 +19,7 @@ public class RatingMapper {
             rating.getId(),
             rating.getScore(),
             rating.getComment(),
-            ServicesMapper.toDTO(rating.getServices()), //mudar isso aqui depois, criar um serviceResumeDTO especifico para rating
+            ServicesMapper.toDTO(rating.getServices()), //TODO: mudar isso aqui depois, criar um serviceResumeDTO especifico para rating
             rating.getCreatedAt().toString()
         );
     }
