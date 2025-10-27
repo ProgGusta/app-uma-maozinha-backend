@@ -5,6 +5,7 @@ import br.com.umamanzinha.uma_maozinha.dtos.rating.RatingResponseDTO;
 import br.com.umamanzinha.uma_maozinha.entities.FreelancerProfile;
 import br.com.umamanzinha.uma_maozinha.entities.Ratings;
 import br.com.umamanzinha.uma_maozinha.entities.Services;
+import br.com.umamanzinha.uma_maozinha.exceptions.BusinessRuleException;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
 import br.com.umamanzinha.uma_maozinha.mapper.RatingMapper;
 import br.com.umamanzinha.uma_maozinha.repository.FreelancerProfileRepository;
@@ -28,23 +29,25 @@ public class RatingService {
     }
     @Transactional
     public RatingResponseDTO createRating(RatingRequestDTO ratingRequestDTO, Long serviceId) {
-        Services service = servicesRepository.findById(serviceId)
+        Services services = servicesRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
 
-        Ratings rating = new Ratings();
-        rating.setScore(ratingRequestDTO.score());
-        rating.setComment(ratingRequestDTO.comment());
-        rating.setServices(service);
-        rating.setFreelancerProfile(service.getFreelancerProfile());
+        if (ratingRepository.existsByServicesId(serviceId)) {
+            throw new BusinessRuleException("Rating for this service already exists");
+        }
+
+        Ratings rating = RatingMapper.toEntity(ratingRequestDTO);
+
+        rating.setServices(services);
+        rating.setFreelancerProfile(services.getFreelancerProfile());
 
         Ratings saveRating = ratingRepository.save(rating);
 
-        calculateRating(service.getFreelancerProfile());
+        calculateRating(services.getFreelancerProfile());
 
         return RatingMapper.toDTO(saveRating);
 
     }
-
 
     @Transactional
     public RatingResponseDTO updateRating(Long ratingId, RatingRequestDTO ratingRequestDTO) {
