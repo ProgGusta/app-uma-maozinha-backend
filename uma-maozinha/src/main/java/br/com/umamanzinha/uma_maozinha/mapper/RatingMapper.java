@@ -2,6 +2,7 @@ package br.com.umamanzinha.uma_maozinha.mapper;
 
 import br.com.umamanzinha.uma_maozinha.dtos.rating.RatingRequestDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.rating.RatingResponseDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesSimpleDTO;
 import br.com.umamanzinha.uma_maozinha.entities.Ratings;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class RatingMapper {
             rating.getId(),
             rating.getScore(),
             rating.getComment(),
-            ServicesMapper.toDTO(rating.getServices()), //TODO: mudar isso aqui depois, criar um serviceResumeDTO especifico para rating
+            new ServicesSimpleDTO(rating.getServices()),
             rating.getCreatedAt().toString()
         );
     }

@@ -1,6 +1,6 @@
 package br.com.umamanzinha.uma_maozinha.services;
 
-import br.com.umamanzinha.uma_maozinha.dtos.UserDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.user.UserDTO;
 import br.com.umamanzinha.uma_maozinha.entities.User;
 import br.com.umamanzinha.uma_maozinha.exceptions.BusinessRuleException;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;

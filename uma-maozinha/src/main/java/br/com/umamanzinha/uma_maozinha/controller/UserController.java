@@ -1,9 +1,7 @@
 package br.com.umamanzinha.uma_maozinha.controller;
 
-import br.com.umamanzinha.uma_maozinha.dtos.AddressDTO;
-import br.com.umamanzinha.uma_maozinha.dtos.PhoneDTO;
-import br.com.umamanzinha.uma_maozinha.dtos.ServicesDTO;
-import br.com.umamanzinha.uma_maozinha.dtos.UserDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesResponseDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.user.UserDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.rating.RatingResponseDTO;
 import br.com.umamanzinha.uma_maozinha.services.*;
 import jakarta.validation.Valid;
@@ -57,8 +55,8 @@ public class UserController {
 
     // services
     @GetMapping("{userId}/user")
-    public ResponseEntity<List<ServicesDTO>> getServicesByUser(@PathVariable Long userId) {
-        List<ServicesDTO> services = servicesService.getAllServicesByUserId(userId);
+    public ResponseEntity<List<ServicesResponseDTO>> getServicesByUser(@PathVariable Long userId) {
+        List<ServicesResponseDTO> services = servicesService.getAllServicesByUserId(userId);
         return ResponseEntity.ok(services);
     }
 

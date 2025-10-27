@@ -1,6 +1,6 @@
 package br.com.umamanzinha.uma_maozinha.mapper;
 
-import br.com.umamanzinha.uma_maozinha.dtos.UserDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.user.UserDTO;
 import br.com.umamanzinha.uma_maozinha.entities.User;
 import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;

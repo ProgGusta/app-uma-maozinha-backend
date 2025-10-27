@@ -1,6 +1,9 @@
 package br.com.umamanzinha.uma_maozinha.mapper;
 
-import br.com.umamanzinha.uma_maozinha.dtos.ServicesDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesRequestDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesResponseDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerSimpleResponseDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.user.UserSimpleResponseDTO;
 import br.com.umamanzinha.uma_maozinha.entities.FreelancerProfile;
 import br.com.umamanzinha.uma_maozinha.entities.Services;
 import br.com.umamanzinha.uma_maozinha.entities.User;
@@ -8,9 +11,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ServicesMapper {
-    public static Services toEntity (ServicesDTO servicesDTO, FreelancerProfile freelancerProfile, User user) {
+    public static Services toEntity (ServicesRequestDTO servicesDTO, FreelancerProfile freelancerProfile, User user) {
         Services services  = new Services ();
-        services.setStatus(servicesDTO.status());
         services.setPrice(servicesDTO.price());
         services.setLocation(servicesDTO.location());
         services.setDescription(servicesDTO.description());
@@ -19,16 +21,16 @@ public class ServicesMapper {
 
         return services;
     }
-    public static ServicesDTO toDTO (Services services) {
-        return new ServicesDTO(
+    public static ServicesResponseDTO toDTO (Services services) {
+        return new ServicesResponseDTO(
                 services.getId(),
                 services.getStatus(),
                 services.getPrice(),
                 services.getLocation(),
                 services.getDescription(),
                 services.getCreatedAt().toString(),
-                services.getFreelancerProfile().getId(),
-                services.getUser().getId()
+                new FreelancerSimpleResponseDTO(services.getFreelancerProfile()),
+                new UserSimpleResponseDTO(services.getUser())
         );
     }
 

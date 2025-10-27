@@ -1,6 +1,6 @@
 package br.com.umamanzinha.uma_maozinha.controller;
 
-import br.com.umamanzinha.uma_maozinha.dtos.ServicesDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesResponseDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerRequestDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerResponseDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.rating.RatingResponseDTO;
@@ -66,8 +66,8 @@ public class FreelancerProfileController {
 
     //services
     @GetMapping("/{freelancerId}/services")
-    public ResponseEntity<List<ServicesDTO>> getServicesByFreelancer(@PathVariable Long freelancerId) {
-        List<ServicesDTO> services = servicesService.getAllServicesByFreelancerId(freelancerId);
+    public ResponseEntity<List<ServicesResponseDTO>> getServicesByFreelancer(@PathVariable Long freelancerId) {
+        List<ServicesResponseDTO> services = servicesService.getAllServicesByFreelancerId(freelancerId);
         return ResponseEntity.ok(services);
     }
 

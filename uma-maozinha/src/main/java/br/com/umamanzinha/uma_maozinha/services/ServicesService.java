@@ -1,6 +1,7 @@
 package br.com.umamanzinha.uma_maozinha.services;
 
-import br.com.umamanzinha.uma_maozinha.dtos.ServicesDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesRequestDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesResponseDTO;
 import br.com.umamanzinha.uma_maozinha.entities.FreelancerProfile;
 import br.com.umamanzinha.uma_maozinha.entities.Services;
 import br.com.umamanzinha.uma_maozinha.entities.User;
@@ -29,7 +30,8 @@ public class ServicesService {
         this.userRepository = userRepository;
     }
 
-    public ServicesDTO createService(ServicesDTO servicesDTO, Long freelancerProfileId) {
+    @Transactional
+    public ServicesResponseDTO createService(ServicesRequestDTO servicesDTO, Long freelancerProfileId) {
         FreelancerProfile freelancerProfile = freelancerProfileRepository.findById(freelancerProfileId)
                 .orElseThrow(() -> new ResourceNotFoundException("FreelancerProfile not found"));
 
@@ -42,18 +44,20 @@ public class ServicesService {
 
         return ServicesMapper.toDTO(services);
     }
-    public List<ServicesDTO> getAllServicesByUserId(Long userId) {
+    @Transactional
+    public List<ServicesResponseDTO> getAllServicesByUserId(Long userId) {
         List<Services> servicesList = servicesRepository.findByUserId(userId);
         return servicesList.stream()
                 .map(ServicesMapper::toDTO).toList();
     }
-    public List<ServicesDTO> getAllServicesByFreelancerId(Long freelancerProfileId) {
+    @Transactional
+    public List<ServicesResponseDTO> getAllServicesByFreelancerId(Long freelancerProfileId) {
         List<Services> servicesList = servicesRepository.findByFreelancerProfileId(freelancerProfileId);
         return servicesList.stream()
                 .map(ServicesMapper::toDTO).toList();
     }
 
-    public ServicesDTO confirmService(Long serviceId, Long freelancerId){
+    public ServicesResponseDTO confirmService(Long serviceId, Long freelancerId){
         Services service =  servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Service not found"));
 
@@ -68,7 +72,7 @@ public class ServicesService {
         return ServicesMapper.toDTO(servicesRepository.save(service));
 
     }
-    public ServicesDTO cancelService(Long serviceId, Long freelancerId){
+    public ServicesResponseDTO cancelService(Long serviceId, Long freelancerId){
         Services service =  servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Service not found"));
 
@@ -81,7 +85,7 @@ public class ServicesService {
         return ServicesMapper.toDTO(servicesRepository.save(service));
 
     }
-    public ServicesDTO completeService(Long serviceId, Long freelancerId){
+    public ServicesResponseDTO completeService(Long serviceId, Long freelancerId){
         Services service =  servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Service not found"));
 
@@ -94,7 +98,7 @@ public class ServicesService {
         return ServicesMapper.toDTO(servicesRepository.save(service));
 
     }
-    public ServicesDTO changeStatusToInProgress(Long serviceId, Long freelancerId){
+    public ServicesResponseDTO changeStatusToInProgress(Long serviceId, Long freelancerId){
         Services service =  servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Service not found"));
 
