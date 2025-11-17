@@ -28,5 +28,5 @@ replay_pid*
 
 .env
 
-D:\Documentos\Repositório\java\app-uma-maozinha\app-uma-maozinha-backend\uma-maozinha\src\main\resources\authz.pem
-D:\Documentos\Repositório\java\app-uma-maozinha\app-uma-maozinha-backend\uma-maozinha\src\main\resources\authz.pub
+*.pem
+*.pub
