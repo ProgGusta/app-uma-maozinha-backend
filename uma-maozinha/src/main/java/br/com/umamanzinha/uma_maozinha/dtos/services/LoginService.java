@@ -42,7 +42,7 @@ public class LoginService {
 //                .map(role -> role.getName())
 //                .toList();
 
-        Long expirationTime = System.currentTimeMillis() + 3600000; // 1 hour expiration time
+        long expirationTime = System.currentTimeMillis() + 3600000; // 1 hour expiration time
 
         JwtClaimsSet jwt = JwtClaimsSet.builder()
                 .issuer("uma-maozinha")
