@@ -8,6 +8,7 @@ import br.com.umamanzinha.uma_maozinha.mapper.UserMapper;
 import br.com.umamanzinha.uma_maozinha.repository.AddressRepository;
 import br.com.umamanzinha.uma_maozinha.repository.PhoneRepository;
 import br.com.umamanzinha.uma_maozinha.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +22,15 @@ public class UserService {
     private final PhoneRepository phoneRepository;
     private final AddressService addressService;
     private final PhoneService phoneService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, AddressRepository addressRepository, PhoneRepository phoneRepository, AddressService addressService, PhoneService phoneService) {
+    public UserService(UserRepository userRepository, AddressRepository addressRepository, PhoneRepository phoneRepository, AddressService addressService, PhoneService phoneService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.phoneRepository = phoneRepository;
         this.addressService = addressService;
         this.phoneService = phoneService;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -36,8 +39,11 @@ public class UserService {
         if (userRepository.existsByEmail(userDTO.email())) {
             throw new BusinessRuleException("Email already in use"); // TODO: criar exception especifica
         }
-
         User user  = UserMapper.toEntity(userDTO);
+
+        String encryptedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encryptedPassword);
+
         user = userRepository.save(user);
 
         if (userDTO.addressDTO() != null)
