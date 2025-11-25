@@ -36,7 +36,7 @@ public class User {
     @Column(name = "created_at",nullable = false, updatable = false)
     private LocalDate createdAt;
 
-    @Column(name = "is_freelancer")
+    @Column(name = "is_freelancer", nullable = false)
     private Boolean isFreelancer = false;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -13,6 +13,7 @@ public record UserDTO(
     @NotBlank String name,
     @NotBlank @Email String email,
     @NotBlank String password,
+    @NotBlank Boolean isFreelancer,
     List<AddressDTO> addressDTO,
     List<PhoneDTO> phoneDTO
 ) {

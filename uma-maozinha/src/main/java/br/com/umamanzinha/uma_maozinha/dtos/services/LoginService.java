@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,9 +39,9 @@ public class LoginService {
 
         User user =  optUser.get();
 
-//        List<String> roles = user.getRoles().stream()
-//                .map(role -> role.getName())
-//                .toList();
+        //List<String> roles = new ArrayList<>(List.of("ADMIN", user.getIsFreelancer() ? "FREELANCER" : "USER")); // TODO: ajustar o role de admin no banco
+        String roles = user.getIsFreelancer() ? "FREELANCER" : "USER";
+
 
         long expirationTime = System.currentTimeMillis() + 3600000; // 1 hour expiration time
 
@@ -51,7 +52,7 @@ public class LoginService {
                 .issuedAt(Instant.now())
                 .claim("userId", user.getId())
                 .claim("email", user.getEmail())
-//                .claim("roles", roles)
+                .claim("roles", roles)
                 .build();
 
         String token = jwtEncoder.encode(JwtEncoderParameters.from(jwt)).getTokenValue();

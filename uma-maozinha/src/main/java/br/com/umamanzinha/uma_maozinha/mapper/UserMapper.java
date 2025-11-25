@@ -21,6 +21,7 @@ public class UserMapper {
             user.getName(),
             user.getEmail(),
             user.getPassword(),
+            user.getIsFreelancer(),
             user.getAddresses()
                         .stream()
                         .map(AddressMapper::toDto)

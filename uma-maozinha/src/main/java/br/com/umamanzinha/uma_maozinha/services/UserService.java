@@ -52,8 +52,6 @@ public class UserService {
         if (userDTO.phoneDTO() != null)
             phoneService.saveAllPhones(user, userDTO.phoneDTO());
 
-
-
         return UserMapper.toDto(user);
     }
 
