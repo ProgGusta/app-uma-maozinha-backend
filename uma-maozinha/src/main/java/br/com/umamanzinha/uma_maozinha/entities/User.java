@@ -36,6 +36,9 @@ public class User {
     @Column(name = "created_at",nullable = false, updatable = false)
     private LocalDate createdAt;
 
+    @Column(name = "is_freelancer")
+    private Boolean isFreelancer = false;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FreelancerProfile> freelancerProfiles;
 

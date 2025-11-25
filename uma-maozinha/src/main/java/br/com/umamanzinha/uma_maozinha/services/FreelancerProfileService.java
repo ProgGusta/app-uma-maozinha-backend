@@ -5,6 +5,7 @@ import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerResponseDTO;
 import br.com.umamanzinha.uma_maozinha.entities.Category;
 import br.com.umamanzinha.uma_maozinha.entities.FreelancerProfile;
 import br.com.umamanzinha.uma_maozinha.entities.User;
+import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
 import br.com.umamanzinha.uma_maozinha.mapper.FreelancerProfileMapper;
 import br.com.umamanzinha.uma_maozinha.repository.CategoryRepository;
 import br.com.umamanzinha.uma_maozinha.repository.FreelancerProfileRepository;
@@ -34,10 +35,15 @@ public class FreelancerProfileService {
     @Transactional
     public FreelancerResponseDTO createFreelancer(Long id, FreelancerRequestDTO dto){
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if(!user.getIsFreelancer()){
+            user.setIsFreelancer(true);
+            userRepository.save(user);
+        }
 
         Category categoryEntity = categoryRepository.findByName(dto.category())
-                .orElseThrow(() -> new RuntimeException("Category not found: " + dto.category()));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + dto.category()));
 
         FreelancerProfile freelancerProfile = FreelancerProfileMapper.toEntity(dto, user,  categoryEntity);
         freelancerProfile.setAverageRating(0.0);
@@ -51,17 +57,23 @@ public class FreelancerProfileService {
         //TODO: Verificar se usuário está autenticado (quando adicionar o spring security)
 
         FreelancerProfile profile = freelancerProfileRepository.findById(profile_id)
-                .orElseThrow(() -> new RuntimeException("Freelancer profile not found with ID: " + profile_id));
+                .orElseThrow(() -> new ResourceNotFoundException("Freelancer profile not found with ID: " + profile_id));
 
         //TODO: Verificar se o usuário que está tentando apagar o perfil freelancer é o dono dele
 
         freelancerProfileRepository.delete(profile);
+
+        if(!freelancerProfileRepository.existsByUserId(profile.getUser().getId())) {
+            User user = profile.getUser();
+            user.setIsFreelancer(false);
+            userRepository.save(user);
+        }
     }
 
     @Transactional(readOnly = true)
     public FreelancerResponseDTO getProfileById(Long profile_id) {
         FreelancerProfile profile = freelancerProfileRepository.findById(profile_id)
-                .orElseThrow(() -> new RuntimeException("Freelancer profile not found with ID: " + profile_id));
+                .orElseThrow(() -> new ResourceNotFoundException("Freelancer profile not found with ID: " + profile_id));
 
         return new FreelancerResponseDTO(profile);
     }
@@ -69,7 +81,7 @@ public class FreelancerProfileService {
     @Transactional(readOnly = true)
     public List<FreelancerResponseDTO> getProfilesByUserId(Long user_id) {
         userRepository.findById(user_id)
-                .orElseThrow(() -> new RuntimeException("user not found with ID: " + user_id));
+                .orElseThrow(() -> new ResourceNotFoundException("user not found with ID: " + user_id));
 
         List<FreelancerProfile> profiles = freelancerProfileRepository.findByUserId(user_id);
 
@@ -83,7 +95,7 @@ public class FreelancerProfileService {
         //TODO: Verificar e obter o id do user conectado
 
         FreelancerProfile profile = freelancerProfileRepository.findById(profile_id)
-                .orElseThrow(() -> new RuntimeException("Freelancer profile not found with ID: " + profile_id));
+                .orElseThrow(() -> new ResourceNotFoundException("Freelancer profile not found with ID: " + profile_id));
 
         //TODO: Verificar se o usuário logado é o dono do perfil
 
@@ -92,7 +104,7 @@ public class FreelancerProfileService {
 
         if (!profile.getCategory().getName().equals(dto.category())) {
             Category newCategory = categoryRepository.findByName(dto.category())
-                    .orElseThrow(() -> new RuntimeException("Category not found: " + dto.category()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + dto.category()));
             profile.setCategory(newCategory);
         }
 

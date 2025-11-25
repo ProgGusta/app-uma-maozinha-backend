@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FreelancerProfileRepository extends JpaRepository<FreelancerProfile,Long> {
     List<FreelancerProfile> findByUserId(Long userId);
+    Boolean existsByUserId(Long userId);
 }
