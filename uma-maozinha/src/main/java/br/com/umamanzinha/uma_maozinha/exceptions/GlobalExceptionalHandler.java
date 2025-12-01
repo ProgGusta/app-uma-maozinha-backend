@@ -28,6 +28,18 @@ public class GlobalExceptionalHandler {
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception);
     }
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ExceptionDTO> handleForbidden (ForbiddenException ex, HttpServletRequest request){
+        ExceptionDTO exception = new ExceptionDTO(
+                HttpStatus.NOT_FOUND.value(),
+                "Forbidden Action!",
+                ex.getMessage(),
+                request.getRequestURI(),
+                LocalDateTime.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionDTO> handleValidationError(MethodArgumentNotValidException ex,

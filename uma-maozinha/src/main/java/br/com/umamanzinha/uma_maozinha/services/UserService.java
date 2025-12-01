@@ -1,8 +1,10 @@
 package br.com.umamanzinha.uma_maozinha.services;
 
+import br.com.umamanzinha.uma_maozinha.config.JwtUserData;
 import br.com.umamanzinha.uma_maozinha.dtos.user.UserDTO;
 import br.com.umamanzinha.uma_maozinha.entities.User;
 import br.com.umamanzinha.uma_maozinha.exceptions.BusinessRuleException;
+import br.com.umamanzinha.uma_maozinha.exceptions.ForbiddenException;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
 import br.com.umamanzinha.uma_maozinha.mapper.UserMapper;
 import br.com.umamanzinha.uma_maozinha.repository.AddressRepository;
@@ -68,7 +70,10 @@ public class UserService {
     }
 
 
-    public UserDTO update(Long id,UserDTO userDTO){
+    public UserDTO update(Long id, UserDTO userDTO, Long authUserId) {
+        if (!id.equals(authUserId)) {
+            throw new ForbiddenException("You can only update your own user data");
+        }
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -87,7 +92,10 @@ public class UserService {
 
     }
 
-    public void deleteById(Long id){
+    public void deleteById(Long id, Long authUserId) {
+        if (!id.equals(authUserId)) {
+            throw new ForbiddenException("You can only delete your own user");
+        }
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 

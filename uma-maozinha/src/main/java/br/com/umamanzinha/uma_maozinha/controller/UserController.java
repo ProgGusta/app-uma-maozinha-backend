@@ -1,5 +1,6 @@
 package br.com.umamanzinha.uma_maozinha.controller;
 
+import br.com.umamanzinha.uma_maozinha.config.JwtUserData;
 import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesResponseDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.user.UserDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.rating.RatingResponseDTO;
@@ -7,6 +8,9 @@ import br.com.umamanzinha.uma_maozinha.services.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +36,8 @@ public class UserController {
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO));
     }
+
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getById(id));
@@ -42,13 +48,14 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateById(@Valid @RequestBody UserDTO userDTO, @PathVariable Long id){
-        return ResponseEntity.ok(userService.update(id,userDTO));
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<UserDTO> updateById(@Valid @RequestBody UserDTO userDTO, @PathVariable Long id, @AuthenticationPrincipal JwtUserData data){
+        return ResponseEntity.ok(userService.update(id,userDTO, data.id()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id){
-        userService.deleteById(id);
+    public ResponseEntity<Void> deleteById(@PathVariable Long id, @AuthenticationPrincipal JwtUserData data){
+        userService.deleteById(id, data.id());
         return ResponseEntity.noContent()
                 .build();
     }
