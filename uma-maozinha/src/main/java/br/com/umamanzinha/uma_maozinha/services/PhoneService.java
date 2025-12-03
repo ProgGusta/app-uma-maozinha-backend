@@ -5,6 +5,7 @@ import br.com.umamanzinha.uma_maozinha.dtos.PhoneDTO;
 import br.com.umamanzinha.uma_maozinha.entities.Address;
 import br.com.umamanzinha.uma_maozinha.entities.Phone;
 import br.com.umamanzinha.uma_maozinha.entities.User;
+import br.com.umamanzinha.uma_maozinha.exceptions.ForbiddenException;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
 import br.com.umamanzinha.uma_maozinha.mapper.PhoneMapper;
 import br.com.umamanzinha.uma_maozinha.repository.PhoneRepository;
@@ -44,11 +45,13 @@ public class PhoneService {
         return PhoneMapper.toDto(savedPhone);
     }
 
-    public PhoneDTO updatePhone(Long phoneId, PhoneDTO phoneDTO) {//mudar isso aqui, se pá não precisa
+    public PhoneDTO updatePhone(Long phoneId, PhoneDTO phoneDTO, Long authId) {
         Phone phone = phoneRepository.findById(phoneId).orElseThrow(
                 () -> new ResourceNotFoundException("Phone not found")
         );
-
+        if (!phone.getUser().getId().equals(authId)) {
+            throw new ForbiddenException("You cannot update a phone from another user!");
+        }
         phone.setNumber(phoneDTO.number());
         phone.setDescription(phoneDTO.description());
         phone.setIsWhatsApp(phoneDTO.isWhatsApp());
@@ -57,10 +60,13 @@ public class PhoneService {
         return PhoneMapper.toDto(updatedPhone);
     }
 
-    public void deletePhone(Long phoneId) {
+    public void deletePhone(Long phoneId, Long authId) {
         Phone phone = phoneRepository.findById(phoneId).orElseThrow(
                 () -> new ResourceNotFoundException("Phone not found")
         );
+        if (!phone.getUser().getId().equals(authId)) {
+            throw new ForbiddenException("You cannot delete a phone from another user!");
+        }
         phoneRepository.delete(phone);
     }
 

@@ -5,7 +5,9 @@ import br.com.umamanzinha.uma_maozinha.dtos.rating.RatingResponseDTO;
 import br.com.umamanzinha.uma_maozinha.entities.FreelancerProfile;
 import br.com.umamanzinha.uma_maozinha.entities.Ratings;
 import br.com.umamanzinha.uma_maozinha.entities.Services;
+import br.com.umamanzinha.uma_maozinha.enums.ServiceStatus;
 import br.com.umamanzinha.uma_maozinha.exceptions.BusinessRuleException;
+import br.com.umamanzinha.uma_maozinha.exceptions.ForbiddenException;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
 import br.com.umamanzinha.uma_maozinha.mapper.RatingMapper;
 import br.com.umamanzinha.uma_maozinha.repository.FreelancerProfileRepository;
@@ -28,12 +30,20 @@ public class RatingService {
         this.freelancerProfileRepository = freelancerProfileRepository;
     }
     @Transactional
-    public RatingResponseDTO createRating(RatingRequestDTO ratingRequestDTO, Long serviceId) {
+    public RatingResponseDTO createRating(RatingRequestDTO ratingRequestDTO, Long serviceId, Long authUserId) {
         Services services = servicesRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
 
+        if (!services.getUser().getId().equals(authUserId)) {
+            throw new ForbiddenException("You cannot rate a service that is not yours!");
+        }
+
         if (ratingRepository.existsByServicesId(serviceId)) {
             throw new BusinessRuleException("Rating for this service already exists");
+        }
+
+        if (!services.getStatus().equals(ServiceStatus.COMPLETED)) {
+            throw new BusinessRuleException("You can only rate a completed service!");
         }
 
         Ratings rating = RatingMapper.toEntity(ratingRequestDTO);
@@ -50,9 +60,13 @@ public class RatingService {
     }
 
     @Transactional
-    public RatingResponseDTO updateRating(Long ratingId, RatingRequestDTO ratingRequestDTO) {
+    public RatingResponseDTO updateRating(Long ratingId, RatingRequestDTO ratingRequestDTO,  Long authUserId) {
         Ratings rating = ratingRepository.findById(ratingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Rating not found"));
+
+        if (!rating.getServices().getUser().getId().equals(authUserId)) {
+            throw new ForbiddenException("You cannot rate a service that is not yours!");
+        }
 
         if (ratingRequestDTO.score() != null) {
             rating.setScore(ratingRequestDTO.score());
@@ -69,16 +83,21 @@ public class RatingService {
     }
 
     @Transactional
-    public void deleteRating(Long ratingId) {
+    public void deleteRating(Long ratingId, Long authUserId) {
         Ratings rating = ratingRepository.findById(ratingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Rating not found"));
+
+        if (!rating.getServices().getUser().getId().equals(authUserId)) {
+            throw new ForbiddenException("You cannot delete a rating of a service that is not yours!");
+        }
 
         ratingRepository.delete(rating);
 
         calculateRating(rating.getFreelancerProfile());
 
     }
-    @Transactional
+
+    @Transactional(readOnly = true)
     public List<RatingResponseDTO> getAllRatingsByFreelancerProfileId(Long freelancerProfileId) {
         List<Ratings> ratings = ratingRepository.findByFreelancerProfile_Id(freelancerProfileId);
         return ratings.stream()
@@ -86,8 +105,11 @@ public class RatingService {
                 .toList();
     }
 
-    @Transactional
-    public List<RatingResponseDTO> getAllRatingsByUserId(Long userId) {
+    @Transactional(readOnly = true)
+    public List<RatingResponseDTO> getAllRatingsByUserId(Long userId, Long authUserId) {
+        if (!userId.equals(authUserId)) {
+            throw new ForbiddenException("You cannot access ratings of another user!");
+        }
         List<Ratings> ratings = ratingRepository.findByServices_User_Id(userId);
         return ratings.stream()
                 .map(RatingMapper::toDTO)

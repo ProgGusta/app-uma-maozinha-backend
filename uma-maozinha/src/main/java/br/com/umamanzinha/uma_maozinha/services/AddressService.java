@@ -3,6 +3,7 @@ package br.com.umamanzinha.uma_maozinha.services;
 import br.com.umamanzinha.uma_maozinha.dtos.AddressDTO;
 import br.com.umamanzinha.uma_maozinha.entities.Address;
 import br.com.umamanzinha.uma_maozinha.entities.User;
+import br.com.umamanzinha.uma_maozinha.exceptions.ForbiddenException;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
 import br.com.umamanzinha.uma_maozinha.mapper.AddressMapper;
 import br.com.umamanzinha.uma_maozinha.repository.AddressRepository;
@@ -33,7 +34,10 @@ public class AddressService {
     }
 
     @Transactional
-    public AddressDTO addAddressToUser(Long userId, AddressDTO addressDTO) {
+    public AddressDTO addAddressToUser(Long userId, AddressDTO addressDTO, Long authId) {
+        if (!userId.equals(authId)) {
+            throw new ForbiddenException("You are not authorized to add an address for this user.");
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -43,11 +47,15 @@ public class AddressService {
         return AddressMapper.toDto(savedAddress);
     }
 
-    public AddressDTO updateAddress(Long addressId, AddressDTO addressDTO){
+    public AddressDTO updateAddress(Long addressId, AddressDTO addressDTO, Long authId){
 
         Address address = addressRepository.findById(addressId).orElseThrow(
                 () -> new ResourceNotFoundException("Address not found")
         );
+
+        if (!address.getUser().getId().equals(authId)) {
+            throw new ForbiddenException("You are not authorized to update this address.");
+        }
 
         address.setStreet(addressDTO.street());
         address.setCity(addressDTO.city());
@@ -59,14 +67,20 @@ public class AddressService {
         return AddressMapper.toDto(updatedAddress);
     }
 
-    public void deleteAddress(Long addressId) {
+    public void deleteAddress(Long addressId, Long authId) {
         Address address = addressRepository.findById(addressId).orElseThrow(
                 () -> new ResourceNotFoundException("Address not found")
         );
+        if (!address.getUser().getId().equals(authId)) {
+            throw new ForbiddenException("You are not authorized to delete this address.");
+        }
         addressRepository.delete(address);
     }
 
-    public List<AddressDTO> getAddressesByUserId(Long userId) {
+    public List<AddressDTO> getAddressesByUserId(Long userId, Long authId) {
+        if (!userId.equals(authId)) {
+            throw new ForbiddenException("You are not authorized to view addresses for this user.");
+        }
         if (!userRepository.existsById(userId)){
             throw new ResourceNotFoundException("User not found");
         }
@@ -76,5 +90,6 @@ public class AddressService {
                 .map(AddressMapper::toDto)
                 .toList();
     }
-    //TODO: futuramente criar um metodo de validação de CEP com API externa
+    //TODO: futuramente criar um metodo de validação de CEP com API externa - kkkkkkkkkkkkkkkkkkkkkkkkkkkkk
+
 }

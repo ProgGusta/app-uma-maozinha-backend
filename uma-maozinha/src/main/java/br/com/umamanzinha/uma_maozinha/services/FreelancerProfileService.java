@@ -5,6 +5,7 @@ import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerResponseDTO;
 import br.com.umamanzinha.uma_maozinha.entities.Category;
 import br.com.umamanzinha.uma_maozinha.entities.FreelancerProfile;
 import br.com.umamanzinha.uma_maozinha.entities.User;
+import br.com.umamanzinha.uma_maozinha.exceptions.ForbiddenException;
 import br.com.umamanzinha.uma_maozinha.exceptions.ResourceNotFoundException;
 import br.com.umamanzinha.uma_maozinha.mapper.FreelancerProfileMapper;
 import br.com.umamanzinha.uma_maozinha.repository.CategoryRepository;
@@ -33,9 +34,14 @@ public class FreelancerProfileService {
     }
 
     @Transactional
-    public FreelancerResponseDTO createFreelancer(Long id, FreelancerRequestDTO dto){
+    public FreelancerResponseDTO createFreelancer(Long id, FreelancerRequestDTO dto, Long authUserId) {
+        if(!id.equals(authUserId)) {
+            throw new ForbiddenException("You cannot create a freelancer profile for another user!");
+        }
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
 
         if(!user.getIsFreelancer()){
             user.setIsFreelancer(true);
@@ -53,13 +59,14 @@ public class FreelancerProfileService {
     }
 
     @Transactional
-    public void deleteProfile(Long profile_id) {
-        //TODO: Verificar se usuário está autenticado (quando adicionar o spring security)
+    public void deleteProfile(Long profile_id, Long authUserId) {
 
         FreelancerProfile profile = freelancerProfileRepository.findById(profile_id)
                 .orElseThrow(() -> new ResourceNotFoundException("Freelancer profile not found with ID: " + profile_id));
 
-        //TODO: Verificar se o usuário que está tentando apagar o perfil freelancer é o dono dele
+        if (!profile.getUser().getId().equals(authUserId)) {
+            throw new ForbiddenException("You can only delete your own freelancer profile");
+        }
 
         freelancerProfileRepository.delete(profile);
 
@@ -91,13 +98,16 @@ public class FreelancerProfileService {
     }
 
     @Transactional
-    public FreelancerResponseDTO updateProfile(Long profile_id, @Valid FreelancerRequestDTO dto) {
-        //TODO: Verificar e obter o id do user conectado
+    public FreelancerResponseDTO updateProfile(Long profile_id, @Valid FreelancerRequestDTO dto, Long authUserId) {
+
 
         FreelancerProfile profile = freelancerProfileRepository.findById(profile_id)
                 .orElseThrow(() -> new ResourceNotFoundException("Freelancer profile not found with ID: " + profile_id));
 
-        //TODO: Verificar se o usuário logado é o dono do perfil
+        if (!profile.getUser().getId().equals(authUserId)) {
+            throw new ForbiddenException("You can only update your own freelancer data");
+        }
+
 
         profile.setTitle(dto.title());
         profile.setDescription(dto.description());

@@ -2,7 +2,7 @@ package br.com.umamanzinha.uma_maozinha.controller;
 
 import br.com.umamanzinha.uma_maozinha.dtos.login.LoginRequest;
 import br.com.umamanzinha.uma_maozinha.dtos.login.LoginResponse;
-import br.com.umamanzinha.uma_maozinha.dtos.services.LoginService;
+import br.com.umamanzinha.uma_maozinha.services.LoginService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

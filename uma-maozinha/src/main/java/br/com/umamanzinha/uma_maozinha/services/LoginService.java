@@ -1,4 +1,4 @@
-package br.com.umamanzinha.uma_maozinha.dtos.services;
+package br.com.umamanzinha.uma_maozinha.services;
 
 import br.com.umamanzinha.uma_maozinha.dtos.login.LoginRequest;
 import br.com.umamanzinha.uma_maozinha.dtos.login.LoginResponse;
@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service

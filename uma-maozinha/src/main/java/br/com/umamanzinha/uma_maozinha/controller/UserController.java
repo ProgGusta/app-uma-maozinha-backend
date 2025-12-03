@@ -37,7 +37,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO));
     }
 
-    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getById(id));
@@ -48,7 +47,6 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserDTO> updateById(@Valid @RequestBody UserDTO userDTO, @PathVariable Long id, @AuthenticationPrincipal JwtUserData data){
         return ResponseEntity.ok(userService.update(id,userDTO, data.id()));
     }
@@ -62,15 +60,15 @@ public class UserController {
 
     // services
     @GetMapping("{userId}/user")
-    public ResponseEntity<List<ServicesResponseDTO>> getServicesByUser(@PathVariable Long userId) {
-        List<ServicesResponseDTO> services = servicesService.getAllServicesByUserId(userId);
+    public ResponseEntity<List<ServicesResponseDTO>> getServicesByUser(@PathVariable Long userId, @AuthenticationPrincipal JwtUserData data) {
+        List<ServicesResponseDTO> services = servicesService.getAllServicesByUserId(userId, data.id());
         return ResponseEntity.ok(services);
     }
 
     //ratings
     @GetMapping("/{userId}/ratings")
-    public ResponseEntity<List<RatingResponseDTO>> getRatingsByUser(@PathVariable Long userId) {
-        List<RatingResponseDTO> ratings = ratingService.getAllRatingsByUserId(userId);
+    public ResponseEntity<List<RatingResponseDTO>> getRatingsByUser(@PathVariable Long userId, @AuthenticationPrincipal JwtUserData data) {
+        List<RatingResponseDTO> ratings = ratingService.getAllRatingsByUserId(userId, data.id());
         return ResponseEntity.ok(ratings);
     }
 }

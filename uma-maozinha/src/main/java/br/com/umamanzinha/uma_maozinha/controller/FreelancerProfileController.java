@@ -1,5 +1,6 @@
 package br.com.umamanzinha.uma_maozinha.controller;
 
+import br.com.umamanzinha.uma_maozinha.config.JwtUserData;
 import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesResponseDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerRequestDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.freelancer.FreelancerResponseDTO;
@@ -11,6 +12,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,8 +35,8 @@ public class FreelancerProfileController {
 
     @PostMapping("/{user_id}/create")
     public ResponseEntity<FreelancerResponseDTO> create(@PathVariable Long user_id,
-                                                        @Valid @RequestBody FreelancerRequestDTO freelancerRequestDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(freelancerProfileService.createFreelancer(user_id, freelancerRequestDTO));
+                                                        @Valid @RequestBody FreelancerRequestDTO freelancerRequestDTO, @AuthenticationPrincipal JwtUserData data) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(freelancerProfileService.createFreelancer(user_id, freelancerRequestDTO, data.id()));
     }
 
     @GetMapping("/{profile_id}")
@@ -49,28 +52,31 @@ public class FreelancerProfileController {
     }
 
     @PutMapping("/{profile_id}")
+    @PreAuthorize("hasRole('FREELANCER')")
     public ResponseEntity<FreelancerResponseDTO> updateFreelancer(
             @PathVariable Long profile_id,
-            @Valid @RequestBody FreelancerRequestDTO dto) {
+            @Valid @RequestBody FreelancerRequestDTO dto,
+            @AuthenticationPrincipal JwtUserData data) {
 
-        FreelancerResponseDTO updatedProfile = freelancerProfileService.updateProfile(profile_id, dto);
+        FreelancerResponseDTO updatedProfile = freelancerProfileService.updateProfile(profile_id, dto, data.id());
         return ResponseEntity.ok(updatedProfile);
     }
 
     @DeleteMapping("/{profile_id}")
-    public ResponseEntity<Void>  deleteProfile(@PathVariable Long profile_id){
-        freelancerProfileService.deleteProfile(profile_id);
+    @PreAuthorize("hasRole('FREELANCER')")
+    public ResponseEntity<Void>  deleteProfile(@PathVariable Long profile_id, @AuthenticationPrincipal JwtUserData data) {
+        freelancerProfileService.deleteProfile(profile_id, data.id());
 
         return ResponseEntity.noContent().build();
     }
 
     //services
     @GetMapping("/{freelancerId}/services")
-    public ResponseEntity<List<ServicesResponseDTO>> getServicesByFreelancer(@PathVariable Long freelancerId) {
-        List<ServicesResponseDTO> services = servicesService.getAllServicesByFreelancerId(freelancerId);
+    public ResponseEntity<List<ServicesResponseDTO>> getServicesByFreelancer(@PathVariable Long freelancerId, @AuthenticationPrincipal JwtUserData data) {
+        List<ServicesResponseDTO> services = servicesService.getAllServicesByFreelancerId(freelancerId, data.id());
         return ResponseEntity.ok(services);
     }
-
+    //ratings
     @GetMapping("/{freelancerId}/ratings")
     public ResponseEntity<List<RatingResponseDTO>> getRatingsByFreelancer(@PathVariable Long freelancerId) {
         List<RatingResponseDTO> ratings = ratingService.getAllRatingsByFreelancerProfileId(freelancerId);
