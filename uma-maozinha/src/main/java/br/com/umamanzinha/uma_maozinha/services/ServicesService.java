@@ -2,6 +2,7 @@ package br.com.umamanzinha.uma_maozinha.services;
 
 import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesRequestDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesResponseDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesWaitDTO;
 import br.com.umamanzinha.uma_maozinha.entities.FreelancerProfile;
 import br.com.umamanzinha.uma_maozinha.entities.Services;
 import br.com.umamanzinha.uma_maozinha.entities.User;
@@ -86,7 +87,8 @@ public class ServicesService {
         return ServicesMapper.toDTO(servicesRepository.save(service));
 
     }
-    public ServicesResponseDTO waitService(Long serviceId, Long authUserId){
+
+    public ServicesResponseDTO waitService(Long serviceId, Long authUserId, ServicesWaitDTO dto){
         Services service =  servicesRepository.findById(serviceId).orElseThrow(
                 () -> new ResourceNotFoundException("Service not found"));
 
@@ -96,6 +98,14 @@ public class ServicesService {
         if(!service.getStatus().equals(ServiceStatus.PENDING)){
             throw new BusinessRuleException("You cannot update this service");
         }
+
+        if(dto.price()!=null)
+            service.setPrice(dto.price());
+
+        if(dto.description()!=null)
+            service.setDescription(dto.description());
+
+
         service.setStatus(ServiceStatus.WAITING_USER);
 
         return ServicesMapper.toDTO(servicesRepository.save(service));
@@ -116,6 +126,7 @@ public class ServicesService {
         return ServicesMapper.toDTO(servicesRepository.save(service));
 
     }
+
     public ServicesResponseDTO cancelService(Long serviceId, Long authUserId) {
         Services service = servicesRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found"));

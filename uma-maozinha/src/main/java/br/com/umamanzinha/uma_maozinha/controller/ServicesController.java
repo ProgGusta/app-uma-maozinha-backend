@@ -3,6 +3,7 @@ package br.com.umamanzinha.uma_maozinha.controller;
 import br.com.umamanzinha.uma_maozinha.config.JwtUserData;
 import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesRequestDTO;
 import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesResponseDTO;
+import br.com.umamanzinha.uma_maozinha.dtos.services.ServicesWaitDTO;
 import br.com.umamanzinha.uma_maozinha.services.ServicesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -113,4 +114,61 @@ public class ServicesController {
 
         return ResponseEntity.ok(servicesService.changeStatusToInProgress(serviceId, data.id()));
     }
+
+    @Operation(
+            summary = "Aceitar serviço após revisão (retorna para PENDING)",
+            description = "O usuário aceita o serviço após o freelancer colocar em WAITING_USER. "
+                    + "Apenas o usuário dono do serviço pode aceitar. Só é possível aceitar quando o status atual for WAITING_USER."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Serviço aceito com sucesso (status PENDING)",
+                    content = @Content(schema = @Schema(implementation = ServicesResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Regras de negócio violadas (status diferente de WAITING_USER)", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Ação proibida: usuário não pode aceitar serviço de outro usuário", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Serviço não encontrado", content = @Content)
+    })
+    @PatchMapping("/{serviceId}/accept")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ServicesResponseDTO> acceptService(
+            @Parameter(description = "ID do serviço", required = true, example = "10")
+            @PathVariable Long serviceId,
+
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal JwtUserData data
+    ) {
+        return ResponseEntity.ok(
+                servicesService.acceptService(serviceId, data.id())
+        );
+    }
+    @Operation(
+            summary = "Colocar serviço em espera (WAITING_USER)",
+            description = "O freelancer altera o serviço para WAITING_USER, podendo atualizar preço e descrição. "
+                    + "Apenas o freelancer dono do serviço pode executar esta ação. Só é possível realizar esta ação se o serviço estiver com status PENDING."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Serviço atualizado para WAITING_USER",
+                    content = @Content(schema = @Schema(implementation = ServicesResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Regras de negócio violadas (status diferente de PENDING)", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Ação proibida: freelancer não pode alterar serviço de outro freelancer", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Serviço não encontrado", content = @Content)
+    })
+    @PatchMapping("/{serviceId}/wait")
+    @PreAuthorize("hasRole('FREELANCER')")
+    public ResponseEntity<ServicesResponseDTO> waitService(
+            @Parameter(description = "ID do serviço", required = true, example = "10")
+            @PathVariable Long serviceId,
+
+            @Parameter(description = "Dados opcionais para atualização do serviço (preço/descrição)")
+            @RequestBody ServicesWaitDTO dto,
+
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal JwtUserData data
+    ) {
+        return ResponseEntity.ok(
+                servicesService.waitService(serviceId, data.id(), dto)
+        );
+    }
+
 }

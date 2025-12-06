@@ -3,6 +3,8 @@ package br.com.umamanzinha.uma_maozinha.dtos.services;
 import br.com.umamanzinha.uma_maozinha.entities.Services;
 import br.com.umamanzinha.uma_maozinha.enums.ServiceStatus;
 
+import java.math.BigDecimal;
+
 public record ServicesSimpleDTO(
     Long id,
     ServiceStatus status,
