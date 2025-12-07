@@ -14,8 +14,15 @@ spring:
         show_sql: true
     open-in-view: false
 
+
 jwt:
   public:
     key: classpath:authz.pub
   private:
     key: classpath:authz.pem
+#
+#jwt:
+#  public:
+#    key: classpath:authz.pub   # fica dentro do projeto
+#  private:
+#    key: file:/app/config/authz.pem   # via volume no container
